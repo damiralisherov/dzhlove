@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Жансая ❤️</title>
+  <style>
+    :root{
+      --glass: rgba(255,255,255,.16);
+      --glass2: rgba(255,255,255,.10);
+      --shadow: 0 20px 60px rgba(0,0,0,.25);
+      --pink: #ff3d6b;
+      --pink2:#ff6aa0;
+      --text: #ffffff;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:var(--text);
+      overflow:hidden;
+      background:
+        radial-gradient(1200px 700px at 10% 20%, rgba(255,255,255,.18), transparent 60%),
+        radial-gradient(900px 600px at 90% 80%, rgba(255,255,255,.12), transparent 55%),
+        linear-gradient(135deg, #ff8fb6, #ffd1dc);
+    }
+
+    /* мягкое размытие фона */
+    .bg-photo{
+      position:fixed;
+      inset:0;
+      background: url("photo.jpg") center/cover no-repeat;
+      filter: blur(18px) brightness(.75) saturate(1.05);
+      transform: scale(1.12);
+      opacity:.55;
+      z-index:-2;
+    }
+    .bg-tint{
+      position:fixed; inset:0;
+      background: linear-gradient(135deg, rgba(255,61,107,.35), rgba(255,255,255,.10));
+      z-index:-1;
+    }
+
+    .wrap{
+      width:min(920px, 92vw);
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:18px;
+      align-items:center;
+    }
+
+    @media (max-width: 860px){
+      .wrap{ grid-template-columns: 1fr; }
+    }
+
+    .panel{
+      background: var(--glass);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:12px;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.15);
+      border: 1px solid rgba(255,255,255,.22);
+      font-weight: 600;
+      letter-spacing:.2px;
+      white-space:nowrap;
+    }
+
+    .btn{
+      border:none;
+      cursor:pointer;
+      padding:10px 14px;
+      border-radius: 999px;
+      color:#fff;
+      font-weight:700;
+      background: linear-gradient(135deg, var(--pink), var(--pink2));
+      box-shadow: 0 10px 25px rgba(255,61,107,.25);
+      transition: transform .15s ease, filter .15s ease;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px) scale(1.02); filter: brightness(1.02); }
+    .btn.secondary{
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.26);
+      box-shadow:none;
+      font-weight:700;
+    }
+
+    .photoCard{
+      border-radius:18px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.25);
+      background: var(--glass2);
+    }
+    .photoCard img{
+      width:100%;
+      height:360px;
+      object-fit:cover;
+      display:block;
+      transform: scale(1.02);
+    }
+    @media (max-width: 860px){
+      .photoCard img{ height:300px; }
+    }
+
+    .caption{
+      padding:12px 14px 14px;
+      text-align:left;
+    }
+    .caption h2{
+      margin:0 0 6px;
+      font-size:22px;
+      line-height:1.2;
+    }
+    .caption p{
+      margin:0;
+      opacity:.95;
+      line-height:1.45;
+    }
+
+    /* Конверт */
+    .envelope-area{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    .hint{
+      opacity:.95;
+      line-height:1.4;
+      padding:12px 14px;
+      border-radius:16px;
+      background: rgba(0,0,0,.12);
+      border: 1px solid rgba(255,255,255,.18);
+    }
+
+    .envelope{
+      width:100%;
+      aspect-ratio: 16/12;
+      max-height: 420px;
+      position:relative;
+      perspective: 1000px;
+      border-radius: 18px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.10);
+      box-shadow: var(--shadow);
+    }
+
+    .env-base{
+      position:absolute; inset:0;
+      background: linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.06));
+    }
+
+    .env-front{
+      position:absolute; inset:0;
+      pointer-events:none;
+    }
+
+    /* нижние "крылья" */
+    .tri-left, .tri-right{
+      position:absolute; bottom:-2px; width:60%; height:65%;
+      background: rgba(255,255,255,.16);
+      transform: skewY(12deg);
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.12));
+    }
+    .tri-left{ left:-10%; border-top-right-radius: 18px; }
+    .tri-right{ right:-10%; transform: skewY(-12deg); border-top-left-radius: 18px; }
+
+    /* верхняя крышка */
+    .flap{
+      position:absolute;
+      left:0; right:0; top:-2px; height:52%;
+      transform-origin: top center;
+      transform: rotateX(0deg);
+      background: linear-gradient(135deg, rgba(255,255,255,.22), rgba(255,255,255,.08));
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      transition: transform .75s ease;
+      border-bottom: 1px solid rgba(255,255,255,.22);
+    }
+
+    /* письмо внутри */
+    .letter{
+      position:absolute;
+      left:50%;
+      bottom:12%;
+      transform: translateX(-50%);
+      width: 86%;
+      height: 76%;
+      border-radius: 16px;
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.26);
+      box-shadow: 0 18px 45px rgba(0,0,0,.22);
+      padding: 16px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      transition: transform .75s ease, opacity .6s ease;
+      opacity: .0;
+      transform: translateX(-50%) translateY(18px);
+    }
+
+    .letter h1{
+      margin:0;
+      font-size: 22px;
+      line-height:1.25;
+    }
+    .letter p{
+      margin:0;
+      line-height:1.5;
+      opacity:.96;
+      font-size: 16px;
+    }
+    .actions{
+      margin-top:auto;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:center;
+    }
+
+    /* открытое состояние */
+    .envelope.open .flap{ transform: rotateX(155deg); }
+    .envelope.open .letter{
+      opacity: 1;
+      transform: translateX(-50%) translateY(-8px);
+    }
+
+    .small{
+      opacity:.9;
+      font-size: 13px;
+      text-align:center;
+      margin-top:8px;
+    }
+
+    /* сердечки */
+    .heart{
+      position:fixed;
+      left:0; top:0;
+      will-change: transform, opacity;
+      pointer-events:none;
+      opacity:.85;
+      filter: drop-shadow(0 8px 14px rgba(0,0,0,.18));
+      animation: floatUp linear forwards;
+    }
+    @keyframes floatUp {
+      from { transform: translate(var(--x), 110vh) scale(var(--s)); opacity: .0; }
+      10% { opacity: .95; }
+      to   { transform: translate(var(--x), -15vh) scale(calc(var(--s) * 1.1)); opacity: 0; }
+    }
+
+    /* финальный экран */
+    .final{
+      text-align:center;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(0,0,0,.12);
+      border: 1px solid rgba(255,255,255,.18);
+      display:none;
+    }
+    .final.show{ display:block; }
+  </style>
+</head>
+
+<body>
+  <div class="bg-photo"></div>
+  <div class="bg-tint"></div>
+
+  <!-- Музыка (положи music.mp3 рядом). Автоплей часто блокируется, поэтому включаем после клика. -->
+  <audio id="bgm" src="music.mp3" preload="auto" loop></audio>
+
+  <div class="wrap">
+    <!-- Левая часть: фото + подпись -->
+    <div class="panel">
+      <div class="topbar">
+        <div class="badge">Дамир ➜ Жансая ❤️</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+          <button class="btn secondary" id="musicBtn">♪ Музыка: выкл</button>
+          <button class="btn secondary" id="heartsBtn">❤ Сердечки</button>
+        </div>
+      </div>
+
+      <div class="photoCard">
+        <img src="photo.jpg" alt="Дамир и Жансая" />
+        <div class="caption">
+          <h2>14 февраля 💌</h2>
+          <p>
+            Жансая, ты — моя радость и спокойствие.<br/>
+            Я хочу, чтобы этот день был только про нас.
+          </p>
+        </div>
+      </div>
+
+      <div class="small">Если фото не грузится — проверь имя файла: <b>photo.jpg</b></div>
+    </div>
+
+    <!-- Правая часть: конверт -->
+    <div class="envelope-area">
+      <div class="hint panel">
+        Нажми на конверт, чтобы открыть письмо ✨<br>
+        (и музыку можно включить кнопкой сверху)
+      </div>
+
+      <div class="envelope" id="envelope" role="button" aria-label="Открыть письмо">
+        <div class="env-base"></div>
+
+        <div class="letter" id="letter">
+          <h1>Жансая ❤️</h1>
+          <p>
+            С 14 февраля!<br>
+            Спасибо, что ты рядом. Ты — мой самый любимый человек.<br><br>
+            Проведём этот день вместе? 😊
+          </p>
+
+          <div class="actions" id="actions">
+            <button class="btn" id="yesBtn">Да 💖</button>
+            <button class="btn secondary" id="maybeBtn">Давай сюрприз 🤭</button>
+          </div>
+
+          <div class="final" id="final">
+            <h1 style="margin:0 0 6px;">Урааа! ❤️</h1>
+            <p style="margin:0;">Я тебя люблю, Жансая. <br>Твой Дамир 💌</p>
+          </div>
+        </div>
+
+        <div class="env-front">
+          <div class="tri-left"></div>
+          <div class="tri-right"></div>
+          <div class="flap"></div>
+        </div>
+      </div>
+
+      <div class="small">
+        Для GitHub Pages: загрузишь <b>index.html</b>, <b>photo.jpg</b>, <b>music.mp3</b> в одну папку.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const envelope = document.getElementById("envelope");
+    const bgm = document.getElementById("bgm");
+    const musicBtn = document.getElementById("musicBtn");
+    const heartsBtn = document.getElementById("heartsBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const maybeBtn = document.getElementById("maybeBtn");
+    const actions = document.getElementById("actions");
+    const final = document.getElementById("final");
+
+    let musicOn = false;
+    let heartsOn = false;
+    let heartsTimer = null;
+
+    function burstHearts(count = 18){
+      for(let i=0;i<count;i++){
+        spawnHeart(3500 + Math.random()*2500);
+      }
+    }
+
+    function spawnHeart(durationMs){
+      const h = document.createElement("div");
+      h.className = "heart";
+      h.textContent = Math.random() < 0.15 ? "💖" : "❤️";
+      const x = Math.random()*100;
+      const s = 0.7 + Math.random()*1.2;
+      h.style.setProperty("--x", x + "vw");
+      h.style.setProperty("--s", s);
+      h.style.fontSize = (14 + Math.random()*18) + "px";
+      h.style.animationDuration = (durationMs/1000) + "s";
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), durationMs);
+    }
+
+    function setMusicState(on){
+      musicOn = on;
+      musicBtn.textContent = on ? "♪ Музыка: вкл" : "♪ Музыка: выкл";
+    }
+
+    musicBtn.addEventListener("click", async () => {
+      try{
+        if(!musicOn){
+          await bgm.play(); // может потребовать первый клик — он уже есть
+          setMusicState(true);
+        } else {
+          bgm.pause();
+          setMusicState(false);
+        }
+      } catch(e){
+        alert("Браузер не дал включить музыку. Нажми ещё раз или проверь music.mp3 рядом с файлом 🙂");
+      }
+    });
+
+    heartsBtn.addEventListener("click", () => {
+      heartsOn = !heartsOn;
+      heartsBtn.textContent = heartsOn ? "❤ Сердечки: вкл" : "❤ Сердечки";
+      if(heartsOn){
+        burstHearts(22);
+        heartsTimer = setInterval(() => spawnHeart(4500 + Math.random()*2500), 260);
+      } else {
+        clearInterval(heartsTimer);
+        heartsTimer = null;
+      }
+    });
+
+    envelope.addEventListener("click", async () => {
+      envelope.classList.toggle("open");
+      // лёгкий эффект
+      burstHearts(14);
+
+      // если пользователь открыл конверт — можно попробовать включить музыку автоматически
+      if(!musicOn){
+        try{
+          await bgm.play();
+          setMusicState(true);
+        } catch(e){
+          // ок, автоплей может быть заблокирован
+        }
+      }
+    });
+
+    yesBtn.addEventListener("click", () => {
+      actions.style.display = "none";
+      final.classList.add("show");
+      burstHearts(40);
+    });
+
+    maybeBtn.addEventListener("click", () => {
+      burstHearts(18);
+      alert("Сюрприз: свидание от Дамира уже в планах 😌❤️");
+    });
+
+    // Старт: ничего не включаем без клика (из-за правил браузера)
+    setMusicState(false);
+  </script>
+</body>
+</html>
