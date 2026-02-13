@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Жансая ❤️</title>
+
   <style>
     :root{
       --glass: rgba(255,255,255,.16);
@@ -30,20 +31,43 @@
         linear-gradient(135deg, #ff8fb6, #ffd1dc);
     }
 
-    /* мягкое размытие фона */
+    /* фон из фото + плавное "дыхание" */
     .bg-photo{
       position:fixed;
       inset:0;
-      background: url("photo.jpg") center/cover no-repeat;
+      background: url("f6484478-0fcd-4356-9721-6fbc9d71f2e9.jpeg") center/cover no-repeat;
       filter: blur(18px) brightness(.75) saturate(1.05);
-      transform: scale(1.12);
-      opacity:.55;
-      z-index:-2;
+      transform: scale(1.14);
+      opacity:.56;
+      z-index:-3;
+      animation: bgMove 16s ease-in-out infinite;
     }
+    @keyframes bgMove{
+      0%   { transform: scale(1.14) translate(0px, 0px); }
+      50%  { transform: scale(1.18) translate(-10px, 8px); }
+      100% { transform: scale(1.14) translate(0px, 0px); }
+    }
+
     .bg-tint{
       position:fixed; inset:0;
-      background: linear-gradient(135deg, rgba(255,61,107,.35), rgba(255,255,255,.10));
+      background: linear-gradient(135deg, rgba(255,61,107,.36), rgba(255,255,255,.10));
+      z-index:-2;
+    }
+
+    /* лёгкий “шимер” */
+    .shimmer{
+      position:fixed; inset:-40%;
+      background: radial-gradient(circle at 30% 20%, rgba(255,255,255,.18), transparent 45%),
+                  radial-gradient(circle at 70% 80%, rgba(255,255,255,.12), transparent 48%);
+      animation: shimmer 18s ease-in-out infinite;
       z-index:-1;
+      pointer-events:none;
+      mix-blend-mode: screen;
+    }
+    @keyframes shimmer{
+      0%{ transform: translate(-2%, -1%) rotate(0deg); opacity:.7;}
+      50%{ transform: translate(2%, 1%) rotate(6deg); opacity:.9;}
+      100%{ transform: translate(-2%, -1%) rotate(0deg); opacity:.7;}
     }
 
     .wrap{
@@ -52,10 +76,6 @@
       grid-template-columns: 1.05fr .95fr;
       gap:18px;
       align-items:center;
-    }
-
-    @media (max-width: 860px){
-      .wrap{ grid-template-columns: 1fr; }
     }
 
     .panel{
@@ -74,6 +94,7 @@
       justify-content:space-between;
       gap:12px;
       margin-bottom:12px;
+      flex-wrap:wrap;
     }
 
     .badge{
@@ -84,7 +105,7 @@
       border-radius: 999px;
       background: rgba(0,0,0,.15);
       border: 1px solid rgba(255,255,255,.22);
-      font-weight: 600;
+      font-weight: 800;
       letter-spacing:.2px;
       white-space:nowrap;
     }
@@ -95,7 +116,7 @@
       padding:10px 14px;
       border-radius: 999px;
       color:#fff;
-      font-weight:700;
+      font-weight:900;
       background: linear-gradient(135deg, var(--pink), var(--pink2));
       box-shadow: 0 10px 25px rgba(255,61,107,.25);
       transition: transform .15s ease, filter .15s ease;
@@ -106,7 +127,7 @@
       background: rgba(255,255,255,.18);
       border: 1px solid rgba(255,255,255,.26);
       box-shadow:none;
-      font-weight:700;
+      font-weight:900;
     }
 
     .photoCard{
@@ -114,16 +135,28 @@
       overflow:hidden;
       border: 1px solid rgba(255,255,255,.25);
       background: var(--glass2);
+      position:relative;
     }
+    .photoCard::after{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,.10) 35%, transparent 70%);
+      transform: translateX(-120%);
+      animation: gloss 6s ease-in-out infinite;
+      pointer-events:none;
+    }
+    @keyframes gloss{
+      0%,35%  { transform: translateX(-120%); opacity:.0; }
+      50%     { opacity:.8; }
+      65%,100%{ transform: translateX(120%); opacity:.0; }
+    }
+
     .photoCard img{
       width:100%;
       height:360px;
       object-fit:cover;
       display:block;
       transform: scale(1.02);
-    }
-    @media (max-width: 860px){
-      .photoCard img{ height:300px; }
     }
 
     .caption{
@@ -142,45 +175,31 @@
     }
 
     /* Конверт */
-    .envelope-area{
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-    }
-
-    .hint{
-      opacity:.95;
-      line-height:1.4;
-      padding:12px 14px;
-      border-radius:16px;
-      background: rgba(0,0,0,.12);
-      border: 1px solid rgba(255,255,255,.18);
-    }
+    .envelope-area{ display:flex; flex-direction:column; gap:14px; }
 
     .envelope{
       width:100%;
       aspect-ratio: 16/12;
       max-height: 420px;
       position:relative;
-      perspective: 1000px;
+      perspective: 1100px;
       border-radius: 18px;
       overflow:hidden;
       border: 1px solid rgba(255,255,255,.22);
       background: rgba(255,255,255,.10);
       box-shadow: var(--shadow);
+      cursor:pointer;
+      transition: transform .18s ease;
     }
+    .envelope:hover{ transform: translateY(-1px); }
 
     .env-base{
       position:absolute; inset:0;
       background: linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.06));
     }
 
-    .env-front{
-      position:absolute; inset:0;
-      pointer-events:none;
-    }
+    .env-front{ position:absolute; inset:0; pointer-events:none; }
 
-    /* нижние "крылья" */
     .tri-left, .tri-right{
       position:absolute; bottom:-2px; width:60%; height:65%;
       background: rgba(255,255,255,.16);
@@ -190,7 +209,6 @@
     .tri-left{ left:-10%; border-top-right-radius: 18px; }
     .tri-right{ right:-10%; transform: skewY(-12deg); border-top-left-radius: 18px; }
 
-    /* верхняя крышка */
     .flap{
       position:absolute;
       left:0; right:0; top:-2px; height:52%;
@@ -202,7 +220,7 @@
       border-bottom: 1px solid rgba(255,255,255,.22);
     }
 
-    /* письмо внутри */
+    /* письмо (бумага) */
     .letter{
       position:absolute;
       left:50%;
@@ -219,21 +237,14 @@
       flex-direction:column;
       gap:12px;
       transition: transform .75s ease, opacity .6s ease;
-      opacity: .0;
+      opacity: 0;
       transform: translateX(-50%) translateY(18px);
+      position: absolute;
     }
 
-    .letter h1{
-      margin:0;
-      font-size: 22px;
-      line-height:1.25;
-    }
-    .letter p{
-      margin:0;
-      line-height:1.5;
-      opacity:.96;
-      font-size: 16px;
-    }
+    .letter h1{ margin:0; font-size:22px; line-height:1.25; }
+    .letter p{ margin:0; line-height:1.5; opacity:.96; font-size:16px; }
+
     .actions{
       margin-top:auto;
       display:flex;
@@ -242,19 +253,23 @@
       justify-content:center;
     }
 
-    /* открытое состояние */
     .envelope.open .flap{ transform: rotateX(155deg); }
     .envelope.open .letter{
       opacity: 1;
-      transform: translateX(-50%) translateY(-8px);
+      transform: translateX(-50%) translateY(-10px);
     }
 
-    .small{
-      opacity:.9;
-      font-size: 13px;
-      text-align:center;
-      margin-top:8px;
+    /* мягкое свечение при открытии */
+    .glow{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:0;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,.22), transparent 55%);
+      transition: opacity .45s ease;
+      z-index: 1;
     }
+    .glow.on{ opacity:1; }
 
     /* сердечки */
     .heart{
@@ -262,9 +277,10 @@
       left:0; top:0;
       will-change: transform, opacity;
       pointer-events:none;
-      opacity:.85;
+      opacity:.88;
       filter: drop-shadow(0 8px 14px rgba(0,0,0,.18));
       animation: floatUp linear forwards;
+      z-index: 5;
     }
     @keyframes floatUp {
       from { transform: translate(var(--x), 110vh) scale(var(--s)); opacity: .0; }
@@ -272,7 +288,24 @@
       to   { transform: translate(var(--x), -15vh) scale(calc(var(--s) * 1.1)); opacity: 0; }
     }
 
-    /* финальный экран */
+    /* звёздная пыль */
+    .spark{
+      position:fixed;
+      width:6px; height:6px;
+      border-radius:999px;
+      background: rgba(255,255,255,.9);
+      box-shadow: 0 0 18px rgba(255,255,255,.65);
+      opacity:.0;
+      pointer-events:none;
+      animation: spark 900ms ease-out forwards;
+      z-index: 6;
+    }
+    @keyframes spark{
+      0%   { transform: translate(var(--x), var(--y)) scale(.6); opacity:0; }
+      20%  { opacity:.95; }
+      100% { transform: translate(calc(var(--x) + var(--dx)), calc(var(--y) + var(--dy))) scale(0); opacity:0; }
+    }
+
     .final{
       text-align:center;
       padding: 14px;
@@ -282,30 +315,63 @@
       display:none;
     }
     .final.show{ display:block; }
+
+    /* 📱 Мобилка: 1 колонка */
+    @media (max-width: 860px){
+      .wrap{ grid-template-columns: 1fr; }
+      .photoCard img{ height:auto; max-height: 420px; }
+      .envelope{ max-height: 380px; }
+      .topbar{ justify-content:center; }
+    }
+
+    /* маленькое всплывающее "коснись" для музыки */
+    .tap{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.20);
+      border: 1px solid rgba(255,255,255,.18);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 800;
+      opacity: 0;
+      transition: opacity .35s ease, transform .35s ease;
+      z-index: 10;
+      pointer-events:none;
+    }
+    .tap.show{
+      opacity: 1;
+      transform: translateX(-50%) translateY(-4px);
+    }
   </style>
 </head>
 
 <body>
   <div class="bg-photo"></div>
   <div class="bg-tint"></div>
+  <div class="shimmer"></div>
+  <div class="glow" id="glow"></div>
+  <div class="tap" id="tap">Нажми на конверт 💌</div>
 
-  <!-- Музыка (положи music.mp3 рядом). Автоплей часто блокируется, поэтому включаем после клика. --<audio id="bgm" autoplay loop>
-  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-</audio>
+  <!-- Музыка по ссылке (ничего добавлять не надо) -->
+  <audio id="bgm" preload="auto" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+  </audio>
 
   <div class="wrap">
-    <!-- Левая часть: фото + подпись -->
+    <!-- фото -->
     <div class="panel">
       <div class="topbar">
         <div class="badge">Дамир ➜ Жансая ❤️</div>
-        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
-          <button class="btn secondary" id="musicBtn">♪ Музыка: выкл</button>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+          <button class="btn secondary" id="musicBtn">♪ Музыка</button>
           <button class="btn secondary" id="heartsBtn">❤ Сердечки</button>
         </div>
       </div>
 
       <div class="photoCard">
-      <img src="f6484478-0fcd-4356-9721-6fbc9d71f2e9.jpeg" alt="Дамир и Жансая" />
+        <img src="f6484478-0fcd-4356-9721-6fbc9d71f2e9.jpeg" alt="Дамир и Жансая" />
         <div class="caption">
           <h2>14 февраля 💌</h2>
           <p>
@@ -314,17 +380,10 @@
           </p>
         </div>
       </div>
-
-      <div class="small">Если фото не грузится — проверь имя файла: <b>photo.jpg</b></div>
     </div>
 
-    <!-- Правая часть: конверт -->
+    <!-- конверт -->
     <div class="envelope-area">
-      <div class="hint panel">
-        Нажми на конверт, чтобы открыть письмо ✨<br>
-        (и музыку можно включить кнопкой сверху)
-      </div>
-
       <div class="envelope" id="envelope" role="button" aria-label="Открыть письмо">
         <div class="env-base"></div>
 
@@ -332,18 +391,18 @@
           <h1>Жансая ❤️</h1>
           <p>
             С 14 февраля!<br>
-            Спасибо, что ты рядом. Ты — мой самый любимый человек.<br><br>
+            Спасибо, что ты рядом.<br><br>
             Проведём этот день вместе? 😊
           </p>
 
           <div class="actions" id="actions">
             <button class="btn" id="yesBtn">Да 💖</button>
-            <button class="btn secondary" id="maybeBtn">Давай сюрприз 🤭</button>
+            <button class="btn secondary" id="maybeBtn">Сюрприз 🤭</button>
           </div>
 
           <div class="final" id="final">
-            <h1 style="margin:0 0 6px;">Урааа! ❤️</h1>
-            <p style="margin:0;">Я тебя люблю, Жансая. <br>Твой Дамир 💌</p>
+            <h1 style="margin:0 0 6px;">Я тебя люблю ❤️</h1>
+            <p style="margin:0;">Твой Дамир 💌</p>
           </div>
         </div>
 
@@ -352,10 +411,6 @@
           <div class="tri-right"></div>
           <div class="flap"></div>
         </div>
-      </div>
-
-      <div class="small">
-        Для GitHub Pages: загрузишь <b>index.html</b>, <b>photo.jpg</b>, <b>music.mp3</b> в одну папку.
       </div>
     </div>
   </div>
@@ -369,16 +424,12 @@
     const maybeBtn = document.getElementById("maybeBtn");
     const actions = document.getElementById("actions");
     const final = document.getElementById("final");
+    const glow = document.getElementById("glow");
+    const tap = document.getElementById("tap");
 
     let musicOn = false;
     let heartsOn = false;
     let heartsTimer = null;
-
-    function burstHearts(count = 18){
-      for(let i=0;i<count;i++){
-        spawnHeart(3500 + Math.random()*2500);
-      }
-    }
 
     function spawnHeart(durationMs){
       const h = document.createElement("div");
@@ -394,66 +445,96 @@
       setTimeout(() => h.remove(), durationMs);
     }
 
-    function setMusicState(on){
-      musicOn = on;
-      musicBtn.textContent = on ? "♪ Музыка: вкл" : "♪ Музыка: выкл";
+    function burstHearts(count = 18){
+      for(let i=0;i<count;i++) spawnHeart(3200 + Math.random()*2600);
     }
 
-    musicBtn.addEventListener("click", async () => {
+    function spark(x, y){
+      const s = document.createElement("div");
+      s.className = "spark";
+      s.style.setProperty("--x", x + "px");
+      s.style.setProperty("--y", y + "px");
+      s.style.setProperty("--dx", (Math.random()*120 - 60) + "px");
+      s.style.setProperty("--dy", (Math.random()*140 - 80) + "px");
+      document.body.appendChild(s);
+      setTimeout(()=>s.remove(), 900);
+    }
+
+    function sparkBurst(centerX, centerY, n=14){
+      for(let i=0;i<n;i++) spark(centerX, centerY);
+    }
+
+    async function tryPlayMusic(){
       try{
-        if(!musicOn){
-          await bgm.play(); // может потребовать первый клик — он уже есть
-          setMusicState(true);
-        } else {
-          bgm.pause();
-          setMusicState(false);
-        }
+        await bgm.play();
+        musicOn = true;
+        musicBtn.textContent = "♪ Музыка: вкл";
+        tap.classList.remove("show");
       } catch(e){
-        alert("Браузер не дал включить музыку. Нажми ещё раз или проверь music.mp3 рядом с файлом 🙂");
+        // если Safari блокирует — покажем подсказку
+        tap.classList.add("show");
+        setTimeout(()=>tap.classList.remove("show"), 2200);
+      }
+    }
+
+    function stopMusic(){
+      bgm.pause();
+      musicOn = false;
+      musicBtn.textContent = "♪ Музыка";
+    }
+
+    musicBtn.addEventListener("click", async (ev) => {
+      sparkBurst(ev.clientX, ev.clientY, 10);
+      if(!musicOn){
+        await tryPlayMusic();
+      } else {
+        stopMusic();
       }
     });
 
-    heartsBtn.addEventListener("click", () => {
+    heartsBtn.addEventListener("click", (ev) => {
+      sparkBurst(ev.clientX, ev.clientY, 10);
       heartsOn = !heartsOn;
       heartsBtn.textContent = heartsOn ? "❤ Сердечки: вкл" : "❤ Сердечки";
       if(heartsOn){
-        burstHearts(22);
-        heartsTimer = setInterval(() => spawnHeart(4500 + Math.random()*2500), 260);
+        burstHearts(18);
+        heartsTimer = setInterval(() => spawnHeart(4300 + Math.random()*2700), 260);
       } else {
         clearInterval(heartsTimer);
         heartsTimer = null;
       }
     });
 
-    envelope.addEventListener("click", async () => {
+    envelope.addEventListener("click", async (ev) => {
       envelope.classList.toggle("open");
-      // лёгкий эффект
-      burstHearts(14);
 
-      // если пользователь открыл конверт — можно попробовать включить музыку автоматически
-      if(!musicOn){
-        try{
-          await bgm.play();
-          setMusicState(true);
-        } catch(e){
-          // ок, автоплей может быть заблокирован
-        }
-      }
+      // свечение и эффекты
+      glow.classList.add("on");
+      setTimeout(()=>glow.classList.remove("on"), 650);
+
+      burstHearts(16);
+      sparkBurst(ev.clientX, ev.clientY, 18);
+
+      // музыка стартует при первом касании
+      if(!musicOn) await tryPlayMusic();
     });
 
-    yesBtn.addEventListener("click", () => {
+    yesBtn.addEventListener("click", (ev) => {
       actions.style.display = "none";
       final.classList.add("show");
-      burstHearts(40);
+      burstHearts(46);
+      sparkBurst(ev.clientX, ev.clientY, 22);
     });
 
-    maybeBtn.addEventListener("click", () => {
+    maybeBtn.addEventListener("click", (ev) => {
       burstHearts(18);
-      alert("Сюрприз: свидание от Дамира уже в планах 😌❤️");
+      sparkBurst(ev.clientX, ev.clientY, 14);
+      alert("Тогда я подготовлю самый красивый сюрприз 😌❤️");
     });
 
-    // Старт: ничего не включаем без клика (из-за правил браузера)
-    setMusicState(false);
+    // Подсказка в начале (ненавязчиво)
+    setTimeout(()=>tap.classList.add("show"), 700);
+    setTimeout(()=>tap.classList.remove("show"), 2600);
   </script>
 </body>
 </html>
